@@ -1,4 +1,3 @@
-# could make this a defined type as well, but want to have only one of these per user for now
 class nonpriv::puppet_run_sched_by_user (
   $nonpriv_user,
   $password,
