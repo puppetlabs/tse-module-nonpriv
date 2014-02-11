@@ -25,7 +25,7 @@ class nonpriv::user_created_by_admin (
 
   $puppet_dir = "C:/Users/${nonpriv_user}/.puppet"
 
-  file { "${puppet_dir}/puppet.conf": {
+  file { "${puppet_dir}/puppet.conf":
     ensure  => file,
     content => "server=${server}\r\ncertname=${certname}",
     require => User [ $nonpriv_user ],
