@@ -39,10 +39,6 @@ class nonpriv::puppet_run_sched_by_user (
     $exec_to_notify = 'delete_sched_task'
   }
 
-  user { $nonpriv_user:
-    ensure => present,
-  }
-  
   file { $xml_dir:
     ensure => directory,
   }
@@ -51,7 +47,7 @@ class nonpriv::puppet_run_sched_by_user (
     ensure  => $ensure,
     owner   => $nonpriv_user,
     content => template('nonpriv/nonpriv_pe_agent_run_xml.erb'),
-    require => [ User[ $nonpriv_user ], File[ $xml_dir ] ],
+    require => File[ $xml_dir ],
     notify  => Exec[ $exec_to_notify ],
   }
 
