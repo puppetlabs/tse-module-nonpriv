@@ -8,7 +8,7 @@ class nonpriv::user_created_by_admin (
   ) {
 
   validate_re($ensure, ['present', 'absent'], '$ensure must be \'absent\' or \'present\'')
-  validate_bool($enable_sched_task), '$enable_sched_task must be \'true\' or \'false\'')
+  validate_bool($enable_sched_task, '$enable_sched_task must be \'true\' or \'false\'')
 
   if $enable_sched_task {
     $nonpriv_groups = ['Users', 'Remote Desktop Users', 'Performance Log Users']
