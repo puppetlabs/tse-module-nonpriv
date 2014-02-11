@@ -19,8 +19,11 @@ class nonpriv::puppet_run_sched_by_user (
 
   $nonpriv_user_xml = "WINDOWS\\${nonpriv_user}"
 
+  $xml_dir  = "C:/Users/${nonpriv_user}/.puppet/xml"
+  $xml_file = "${xml_dir}/${nonpriv_user}_pe_agent_run.xml"
+
   $sched_task_command = 'C:\Windows\System32\schtasks.exe'
-  $sched_task_create  = "/Create /XML C:/Users/${nonpriv_user}/Desktop/${nonpriv_user}_pe_agent_run.xml"
+  $sched_task_create  = "/Create /XML ${xml_file}"
   $sched_task_delete  = '/Delete'
   $sched_task_query   = '/Query'
   $sched_task_creds   = "/RU ${nonpriv_user_xml} /RP ${password}"
@@ -39,14 +42,12 @@ class nonpriv::puppet_run_sched_by_user (
   user { $nonpriv_user:
     ensure => present,
   }
-
-  $xml_dir = "C:/Users/${nonpriv_user}/.puppet/xml"
   
   file { $xml_dir:
     ensure => directory,
   }
 
-  file { "${xml_dir}/${nonpriv_user}_pe_agent_run.xml":
+  file { ${xml_file}:
     ensure  => $ensure,
     owner   => $nonpriv_user,
     content => template('nonpriv/nonpriv_pe_agent_run_xml.erb'),
