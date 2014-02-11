@@ -53,8 +53,8 @@ class nonpriv::puppet_run_sched_by_user (
   exec { 'create_sched_task':
     command     => $create_sched_task,
     unless      => $exists_sched_task,
-    #tries       => 3,
-    #timeout     => 15,
+    #tries      => 3,
+    #timeout    => 15,
     refreshonly => true,
   }
 
@@ -67,7 +67,7 @@ class nonpriv::puppet_run_sched_by_user (
   
   exec { 'delete_sched_task':
     command     => $delete_sched_task,
-    onlyif     => $exists_sched_task,
+    onlyif      => $exists_sched_task,
     refreshonly => true,
   }
 
