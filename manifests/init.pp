@@ -1,4 +1,4 @@
-class nonpriv ($user, $password, $server) {
+class nonpriv ($user, $password, $server, $certname=$user) {
 
   class { 'nonpriv::user_created_by_admin':
     nonpriv_user      => $user,
@@ -12,10 +12,10 @@ class nonpriv ($user, $password, $server) {
   class { 'nonpriv::puppet_run_sched_by_user':
     nonpriv_user      => $user,
     password          => $password,
-    ensure            =>'present',
-    certname          =>$user,
-    server            =>$server,
-    run_interval_mins =>'30',
+    ensure            => 'present',
+    certname          => $user,
+    server            => $server,
+    run_interval_mins => '30',
   }
 
   Class[ 'nonpriv::user_created_by_admin' ] ->
