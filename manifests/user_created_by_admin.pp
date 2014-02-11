@@ -1,6 +1,6 @@
 class nonpriv::user_created_by_admin (
   $password,
-  $nonpriv_user=$name,
+  $nonpriv_user,
   $ensure='present', # 'present' or 'absent'
   $certname=$nonpriv_user,
   $server='puppet', # puppet master
