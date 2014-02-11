@@ -47,7 +47,7 @@ class nonpriv::puppet_run_sched_by_user (
     ensure => directory,
   }
 
-  file { ${xml_file}:
+  file { $xml_file:
     ensure  => $ensure,
     owner   => $nonpriv_user,
     content => template('nonpriv/nonpriv_pe_agent_run_xml.erb'),
