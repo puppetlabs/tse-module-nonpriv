@@ -1,4 +1,4 @@
-define nonpriv::user_created_by_admin (
+class nonpriv::user_created_by_admin (
   $password,
   $nonpriv_user=$name,
   $ensure='present', # 'present' or 'absent'
@@ -8,9 +8,8 @@ define nonpriv::user_created_by_admin (
   ) {
 
   validate_re($ensure, ['present', 'absent'], '$ensure must be \'absent\' or \'present\'')
-  validate_re($enable_sched_task, [true, false], '$enable_sched_task must be \'true\' or \'false\'')
+  validate_re(bool2num($enable_sched_task), [1, 0], '$enable_sched_task must be \'true\' or \'false\'')
 
-  $nonpriv_groups = undef
   if $enable_sched_task {
     $nonpriv_groups = ['Users', 'Remote Desktop Users', 'Performance Log Users']
   } else {
@@ -22,6 +21,14 @@ define nonpriv::user_created_by_admin (
     managehome => true,
     password   => $password,
     groups     => $nonpriv_groups,
+  }
+
+  $puppet_dir = "C:/Users/${nonpriv_user}/.puppet"
+
+  file { "$puppet_dir/puppet.conf": {
+    ensure  => file,
+    content => "server=${server}\r\ncertname=${certname}",
+    require => User [ $nonpriv_user ],
   }
 
 }

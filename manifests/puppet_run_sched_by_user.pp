@@ -11,7 +11,6 @@ class nonpriv::puppet_run_sched_by_user (
   validate_re($ensure, ['present', 'absent'], '$ensure must be \'absent\' or \'present\'')
   validate_re($run_interval_mins, ['5', '10', '15', '30', '60'], '$run_interval_mins must be one of 5, 10, 15, 30, 60')
 
-  $run_interval_xml = undef
   if $run_interval_mins == '60' {
     $run_interval_xml = 'PT1H' # 1 Hour
   } else {
@@ -20,7 +19,6 @@ class nonpriv::puppet_run_sched_by_user (
 
   $nonpriv_user_xml = "WINDOWS\\${nonpriv_user}"
 
-  $exec_to_notify = undef
   $sched_task_command = 'C:\Windows\System32\schtasks.exe'
   $sched_task_create  = "/Create /XML C:/Users/${nonpriv_user}/Desktop/${nonpriv_user}_pe_agent_run.xml"
   $sched_task_delete  = '/Delete'
@@ -29,31 +27,52 @@ class nonpriv::puppet_run_sched_by_user (
   $sched_task_name    = "/TN ${nonpriv_user}_pe_agent_run"
 
   $create_sched_task = "${sched_task_command} ${sched_task_create} ${sched_task_creds} ${sched_task_name}"
-  $delete_sched_task = "${sched_task_command} ${sched_task_delete} ${sched_task_creds} ${sched_task_name}"
+  $delete_sched_task = "${sched_task_command} ${sched_task_delete} ${sched_task_creds} ${sched_task_name} /F"
   $exists_sched_task = "${sched_task_command} ${sched_task_query} ${sched_task_name}"
 
   if $ensure == 'present' {
-    $exec_to_notify = $create_sched_task
+    $exec_to_notify = 'delete_then_create_sched_task'
   } else {
-    $exec_to_notify = $delete_sched_task
+    $exec_to_notify = 'delete_sched_task'
   }
 
-  file { "C:/Users/${nonpriv_user}/Desktop/${nonpriv_user}_pe_agent_run.xml":
+  user { $nonpriv_user:
+    ensure => present,
+  }
+
+  $xml_dir = "C:/Users/${nonpriv_user}/.puppet/xml"
+  
+  file { $xml_dir:
+    ensure => directory,
+  }
+
+  file { "${xml_dir}/${nonpriv_user}_pe_agent_run.xml":
     ensure  => $ensure,
     owner   => $nonpriv_user,
     content => template('nonpriv/nonpriv_pe_agent_run_xml.erb'),
-    require => User[ $nonpriv_user ],
-    notify  => $exec_to_notify,
+    require => [ User[ $nonpriv_user ], File[ $xml_dir ] ],
+    notify  => Exec[ $exec_to_notify ],
   }
 
-  exec { $create_sched_task:
-    unless       => $exists_sched_task,
-    refresh_only => true,
+  exec { 'create_sched_task':
+    command     => $create_sched_task,
+    unless      => $exists_sched_task,
+    #tries       => 3,
+    #timeout     => 15,
+    refreshonly => true,
   }
 
-  exec { $delete_sched_task:
-    onlyif       => $exists_sched_task,
-    refresh_only => true,
+  exec { 'delete_then_create_sched_task':
+    command     => $delete_sched_task,
+    returns     => [1,0], # don't care if delete fails or succeeds
+    refreshonly => true,
+    notify      => Exec[ 'create_sched_task' ],
+  }
+  
+  exec { 'delete_sched_task':
+    command     => $delete_sched_task,
+    onlyif     => $exists_sched_task,
+    refreshonly => true,
   }
 
 }
