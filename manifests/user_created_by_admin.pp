@@ -27,6 +27,7 @@ class nonpriv::user_created_by_admin (
   
   file { $puppet_dir:
     ensure  => directory,
+    owner   => $nonpriv_user,
     require => User [ $nonpriv_user ],
   }
 
