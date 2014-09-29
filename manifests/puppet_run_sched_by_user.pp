@@ -1,5 +1,5 @@
-class nonpriv::puppet_run_sched_by_user (
-  $nonpriv_user,
+define nonpriv::puppet_run_sched_by_user (
+  $nonpriv_user = $name,
   $password,
   $ensure='present', # 'present' or 'absent'
   $certname=$nonpriv_user,
@@ -9,6 +9,12 @@ class nonpriv::puppet_run_sched_by_user (
 
   validate_re($ensure, ['present', 'absent'], '$ensure must be \'absent\' or \'present\'')
   validate_re($run_interval_mins, ['5', '10', '15', '30', '60'], '$run_interval_mins must be one of 5, 10, 15, 30, 60')
+
+  # 'Performance Log Users' group membership will allow user to have own Sched Tasks
+  user { "${nonpriv_user}":
+    ensure => present,
+    groups => ['Users', 'Remote Desktop Users', 'Performance Log Users'],
+  }
 
   if $run_interval_mins == '60' {
     $run_interval_xml = 'PT1H' # 1 Hour
