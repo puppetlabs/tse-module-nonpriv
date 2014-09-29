@@ -1,9 +1,9 @@
 define nonpriv::user_created_by_admin (
   $nonpriv_user = $name,
-  $password,
-  $ensure='present', # 'present' or 'absent'
-  $certname=$nonpriv_user,
-  $server='puppet', # puppet master
+  $password,    # required
+  $ensure       = 'present', # 'present' or 'absent'
+  $certname     = $name,
+  $server       = 'puppet', # puppet master
   ) {
 
   validate_re($ensure, ['present', 'absent'], '$ensure must be \'absent\' or \'present\'')
