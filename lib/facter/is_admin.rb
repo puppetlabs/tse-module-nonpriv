@@ -1,6 +1,6 @@
 Facter.add(:is_admin) do
-  require 'tempfile'
   confine :kernel => 'windows'
+  require 'tempfile'
   setcode do
     ps1 = Tempfile.new(['is_admin_fact_powershell_script', '.ps1'])
     script = <<END
@@ -18,7 +18,21 @@ END
 end
 
 Facter.add(:is_admin) do
-  setcode do
-    (Facter.value(:id) == 'root').to_s
+  confine do
+    Facter::Core::Execution.which('id') && Facter.value(:kernel) != "SunOS"
   end
+  setcode { (Facter::Core::Execution.exec('id -u')) == 0).to_s }
+end
+
+Facter.add(:is_admin) do
+  confine :kernel => :SunOS
+  setcode do
+    if File.exist? '/usr/xpg4/bin/id'
+      (Facter::Core::Execution.exec('/usr/xpg4/bin/id -u') == 0).to_s
+    end
+  end
+end
+
+Facter.add(:is_admin) do
+  setcode { (Facter.value(:id) == 'root').to_s }
 end
