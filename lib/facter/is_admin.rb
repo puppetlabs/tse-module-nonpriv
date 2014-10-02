@@ -21,7 +21,7 @@ Facter.add(:is_admin) do
   confine do
     Facter::Core::Execution.which('id') && Facter.value(:kernel) != "SunOS"
   end
-  setcode { (Facter::Core::Execution.exec('id -u')) == 0).to_s }
+  setcode { (Facter::Core::Execution.exec('id -u') == 0).to_s }
 end
 
 Facter.add(:is_admin) do
