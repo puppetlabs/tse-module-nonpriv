@@ -23,7 +23,9 @@ Facter.add(:is_admin) do
     Facter::Core::Execution.which('id') && Facter.value(:kernel) != "SunOS"
   end
     setcode do
-      Facter.debug("main: #{`id -u`}.chomp")
+      id = `id -u`
+      bool = (id.chomp == 0)
+      Facter.debug("main: id => #{id.chomp}, bool => #{bool}")
       (Facter::Core::Execution.exec('id -u').chomp == 0).to_s
     end
 end
