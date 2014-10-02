@@ -13,7 +13,6 @@ END
     value = 'false'
     value = `powershell -executionpolicy remotesigned -file #{ps1.path}`.chomp.chomp.downcase
     ps1.unlink
-    Facter.debug("windows")
     (value == 'true').to_s
   end
 end
@@ -25,7 +24,6 @@ Facter.add(:is_admin) do
     setcode do
       id = `id -u`
       bool = (id.chomp == 0)
-      Facter.debug("main: id => #{id.chomp}, bool => #{bool}")
       (Facter::Core::Execution.exec('id -u').strip == "0").to_s
     end
 end
@@ -33,7 +31,6 @@ end
 Facter.add(:is_admin) do
   confine :kernel => :SunOS
   setcode do
-    Facter.debug("solaris")
     if File.exist? '/usr/xpg4/bin/id'
       (Facter::Core::Execution.exec('/usr/xpg4/bin/id -u').strip == "0").to_s
     end
@@ -42,7 +39,6 @@ end
 
 Facter.add(:is_admin) do
   setcode do
-    Facter.debug("root")
     (Facter.value(:id) == 'root').to_s
   end
 end
