@@ -11,7 +11,7 @@ END
     ps1.write(script)
     ps1.close
     value = 'false'
-    value = `powershell -executionpolicy remotesigned -file #{ps1.path}`.chomp.chomp.downcase
+    value = `powershell -executionpolicy remotesigned -file #{ps1.path}`.strip.downcase
     ps1.unlink
     (value == 'true').to_s
   end
