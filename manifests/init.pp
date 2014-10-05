@@ -14,5 +14,14 @@ class nonpriv ($password='puppetlabs', $server='puppet') {
       password => $password,
       server   => $server,
     }
-  }
+
+    @@file_line { $uniqish_name:
+      path => '/etc/puppetlabs/puppet/autosign.conf',
+      line => $uniqish_name,
+      tag  => ['np_fl'],
+    }
+    if $server == $clientcert {
+      File_line <<| tag == 'np_fl' |>>
+    } 
+  } 
 }
