@@ -11,7 +11,7 @@ define nonpriv::user_created_by_admin (
   $win_nonpriv_groups = ['Users', 'Remote Desktop Users']
   $groups = $kernel ? {
     'windows' => $win_nonpriv_groups,
-    default   => '',
+    default   => [],
   }
 
   user { $nonpriv_user:
