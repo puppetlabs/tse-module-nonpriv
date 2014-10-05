@@ -1,9 +1,15 @@
 class nonpriv ($suffix='nonadmin', $password='puppetlabs', $server='puppet') {
   if $is_admin {
-    $kern = downcase($kernel) 
-    $cert = values_at(split($clientcert, '[.]'), 0)
+    $k            = downcase($kernel)
+    # first three chars of kernel fact
+    $kern         = inline_template('<%= @k[0..2] %>')
+    # first portion of dotted certname
+    $cert         = values_at(split($clientcert, '[.]'), 0)
+    $uniqish      = "${kern}_${suffix}_${cert}"
+    # first 20 chars of name. Seems windows has 20 char limit & linux 32 char.
+    $uniqish_name = inline_template('<%= @uniqish[0..19] %>') 
 
-    nonpriv::user_created_by_admin { "${kern}_${suffix}_${cert}":
+    nonpriv::user_created_by_admin { $uniqish_name:
       ensure   => present,
       password => $password,
       server   => $server,
