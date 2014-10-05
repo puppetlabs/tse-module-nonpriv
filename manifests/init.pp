@@ -2,7 +2,7 @@ class nonpriv ($suffix='nonadmin', $password='puppetlabs', $server='puppet') {
   if $is_admin {
     $kern = downcase($kernel)
 
-    nonpriv::user_created_by_admin { "${kern}_${suffix}":
+    nonpriv::user_created_by_admin { "${kern}_${suffix}_${clientcert}":
       ensure   => present,
       password => $password,
       server   => $server,
