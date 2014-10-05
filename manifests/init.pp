@@ -4,8 +4,8 @@ class nonpriv ($suffix='nonadmin', $password='puppetlabs', $server='puppet') {
 
     nonpriv::user_created_by_admin { "${kern}_${suffix}":
       ensure   => present,
-      password => ${password},
-      server   => ${server},
+      password => $password,
+      server   => $server,
     }
   }
 }
