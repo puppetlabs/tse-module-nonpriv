@@ -22,9 +22,7 @@ class nonpriv ($password='puppetlabs', $server='puppet') {
     }
     if $server == $clientcert {
       File_line <<| tag == 'np_fl' |>>
-        ~> exec { "/bin/su - peadmin -c 'mco puppet runonce --noop -I ${uniqish_name}'":
-             refreshonly => true,
-           }
     } 
+    exec { "/bin/su - ${uniqish_name} -c '/opt/puppet/bin/puppet agent -t'": }
   } 
 }
