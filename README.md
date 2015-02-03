@@ -20,5 +20,5 @@ class { 'nonpriv':
 
 And one fact:
 
- * **is_admin**: the isadmin fact is true for root or Administrator users on many systems
+ * **is_admin**: the is_admin fact is true for root or Administrator users on many systems
 
