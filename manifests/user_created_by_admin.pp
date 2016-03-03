@@ -32,7 +32,7 @@ define nonpriv::user_created_by_admin (
   file { $puppet_dir:
     ensure  => directory,
     owner   => $nonpriv_user,
-    require => User [ $nonpriv_user ],
+    require => User[$nonpriv_user],
   }
   
   $win_content = "[main]\r\nserver=${server}\r\ncertname=${certname}"
@@ -45,7 +45,7 @@ define nonpriv::user_created_by_admin (
   file { "${puppet_dir}/puppet.conf":
     ensure  => file,
     content => $content,
-    require => File [ $puppet_dir ],
+    require => File[$puppet_dir],
   }
 
 }
